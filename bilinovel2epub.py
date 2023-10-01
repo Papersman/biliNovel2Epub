@@ -30,7 +30,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 
 基础URL = "https://w.linovelib.com"
-
+decodeURL = 'https://bili-nvl-mapping.vercel.app/'
 
 USER_AGENTS =    ["Mozilla/5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30",
     "Mozilla/5.0 (Linux; U; Android 2.3.6; en-us; Nexus S Build/GRK39F) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",
@@ -63,8 +63,21 @@ HEARDERS = {
 }
 
 # 原始的中文字符混淆对应map
-with open("secretMap.json", "r") as f:
-    secretMap = json.loads(f.read().replace("'", "\"").replace("\\\\", "\\"), strict=False)
+# 手动获取map，填写到根目录下的 secretMap.json
+# with open("secretMap.json", "r") as f:
+#     secretMap = json.loads(f.read().replace("'", "\"").replace("\\\\", "\\"), strict=False)
+
+# 从外部获取混淆表
+def fetch_secretMap():
+    respond = session.get(decodeURL).text
+    try:
+        result = eval(str(respond).replace("'", "\"").replace("\\\\", "\\"))
+    except:
+        console.print("字符混淆表获取出错", style="rgb(230,58,58)")
+        exit()
+    return result
+
+secretMap = fetch_secretMap()
 
 # 恢复函数，根据secretMap进行恢复
 def restore_chars(text):
